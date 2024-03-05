@@ -87,7 +87,7 @@ struct _ntfs_inode {
 				   inodes and is incremented/decremented in the
 				   base inode for attribute/raw inode
 				   opens/closes, too. */
-	lck_rw_t lock;		/* Lock serializing changes to the inode such
+	lck_rw_t_ex lock;		/* Lock serializing changes to the inode such
 				   as inode truncation and directory content
 				   modification (both take the lock exclusive)
 				   and calls like readdir and file read (these
@@ -98,7 +98,7 @@ struct _ntfs_inode {
 				   this is the size of an mst protected ntfs
 				   record. */
 	u8 block_size_shift; 	/* Log2 of the above. */
-	lck_spin_t size_lock;	/* Lock serializing access to inode sizes. */
+	lck_spin_t_ex size_lock;	/* Lock serializing access to inode sizes. */
 	s64 allocated_size;	/* Copy from the attribute record. */
 	s64 data_size;		/* Copy from the attribute record. */
 	s64 initialized_size;	/* Copy from the attribute record. */
@@ -194,7 +194,7 @@ struct _ntfs_inode {
 	 * inodes.
 	 */
 	ntfs_inode *mft_ni;	/* Pointer to the ntfs inode of $MFT. */
-	lck_mtx_t buf_lock;     /* Mutex to protect the buffer when we cannot
+	lck_mtx_t_ex buf_lock;     /* Mutex to protect the buffer when we cannot
 				   rely on buf_map(...) providing this service
 				   for free. */
 	buf_t m_buf;		/* Buffer containing the mft record of the
@@ -248,14 +248,14 @@ struct _ntfs_inode {
 							   per cb. */
 		};
 	};
-	lck_mtx_t extent_lock;	/* Lock for accessing/modifying the below . */
+	lck_mtx_t_ex extent_lock;	/* Lock for accessing/modifying the below . */
 	s32 nr_extents;	/* For a base mft record, the number of attached extent
 			   inodes (0 if none), for extent records and for fake
 			   inodes describing an attribute this is -1 if the
 			   base inode at @base_ni is valid and 0 otherwise. */
 	u32 extent_alloc; /* Number of bytes allocated for the extent_nis
 			     array. */
-	lck_mtx_t attr_nis_lock; /* Lock for accessing/modifying the below. */
+	lck_mtx_t_ex attr_nis_lock; /* Lock for accessing/modifying the below. */
 	s32 nr_attr_nis;	/* For a base inode, the number of loaded
 				   attribute inodes (0 if none).  Ignored for
 				   attribut inodes and fake inodes. */

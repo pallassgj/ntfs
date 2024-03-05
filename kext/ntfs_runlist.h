@@ -104,7 +104,7 @@ typedef struct {
 	ntfs_rl_element *rl;
 	unsigned elements;
 	unsigned alloc_count;
-	lck_rw_t lock;
+	lck_rw_t_ex lock;
 } ntfs_runlist;
 
 #include "ntfs.h"

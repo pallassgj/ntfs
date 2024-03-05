@@ -435,6 +435,7 @@
 		72E75FEE098714850050048E /* ntfs_unistr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ntfs_unistr.h; sourceTree = "<group>"; };
 		72FE849209313B0D00752581 /* ntfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ntfs.h; sourceTree = "<group>"; usesTabs = 1; };
 		72FE849709313B5100752581 /* ntfs_volume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ntfs_volume.h; sourceTree = "<group>"; };
+		825ADBCE2B96C03700308E68 /* mntopts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mntopts.h; sourceTree = "<group>"; };
 		A00AB6C0263244FD0003441E /* ntfs.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ntfs.plist; path = tests/ntfs.plist; sourceTree = "<group>"; };
 		A063216F286632C6002149EE /* libs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = libs; path = tests/libs; sourceTree = "<group>"; };
 		A0632170286632E3002149EE /* test_userfs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = test_userfs.py; path = tests/test_userfs.py; sourceTree = "<group>"; };
@@ -668,6 +669,7 @@
 				72E40FE8091CC3A900674539 /* Products */,
 				BE3E0A1D0AD9A0E40054ACA0 /* util */,
 				F9BD399A23DF99500061BF91 /* Frameworks */,
+				825ADBCD2B96BBF100308E68 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -780,6 +782,7 @@
 		BE4A177B0AEBB7B0001371C6 /* mount */ = {
 			isa = PBXGroup;
 			children = (
+				825ADBCE2B96C03700308E68 /* mntopts.h */,
 				BE4A17860AEBB85E001371C6 /* mount_ntfs.8 */,
 				BE4A17870AEBB85E001371C6 /* mount_ntfs.c */,
 			);

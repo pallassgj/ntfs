@@ -110,4 +110,20 @@ typedef sle64 leUSN;
 /* Our boolean type. */
 typedef boolean_t BOOL;
 
+typedef struct {
+    uintptr_t opaque[2] __kernel_data_semantics;
+} lck_spin_t_ex;
+
+typedef struct {
+    uintptr_t opaque[2] __kernel_data_semantics;
+} lck_mtx_t_ex;
+
+typedef struct {
+    uintptr_t opaque[16];
+} lck_mtx_ext_t_ex;
+
+typedef struct {
+    uintptr_t               opaque[2] __kernel_data_semantics;
+} lck_rw_t_ex;
+
 #endif /* !_OSX_NTFS_TYPES_H */

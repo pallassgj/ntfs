@@ -292,7 +292,7 @@ signed utf8_to_ntfs(const ntfs_volume *vol, const u8 *ins,
 	} else {
 		/* Allocate the maximum length NTFS string. */
 		ntfs_size = NTFS_MAX_NAME_LEN << NTFSCHAR_SIZE_SHIFT;
-		ntfs = IOMallocData(ntfs_size);
+		ntfs = IOMalloc(ntfs_size);
 		if (!ntfs) {
 			ntfs_error(vol->mp, "Failed to allocate memory for "
 					"output string.");
@@ -331,7 +331,7 @@ signed utf8_to_ntfs(const ntfs_volume *vol, const u8 *ins,
 	return res_size;
 err:
 	if (!*outs)
-		IOFreeData(ntfs, ntfs_size);
+		IOFree(ntfs, ntfs_size);
 	return -err;
 }
 
@@ -395,7 +395,7 @@ signed ntfs_to_utf8(const ntfs_volume *vol, const ntfschar *ins,
         }
 
         /* Allocate buffer for the converted string. */
-		utf8 = IOMallocData(utf8_size);
+		utf8 = IOMalloc(utf8_size);
 		if (!utf8) {
 			ntfs_error(vol->mp, "Failed to allocate memory for "
 					"output string.");
@@ -437,7 +437,7 @@ signed ntfs_to_utf8(const ntfs_volume *vol, const ntfschar *ins,
 	return res_size;
 err:
 	if (!*outs)
-		IOFreeData(utf8, utf8_size);
+		IOFree(utf8, utf8_size);
 	return -err;
 }
 

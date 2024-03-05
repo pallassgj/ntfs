@@ -123,7 +123,7 @@ struct _ntfs_volume {
 
 	ntfs_inode *mftbmp_ni;		/* Attribute ntfs inode for
 					   $MFT/$BITMAP. */
-	lck_rw_t mftbmp_lock;		/* Lock for serializing accesses to the
+	lck_rw_t_ex mftbmp_lock;		/* Lock for serializing accesses to the
 					   mft record bitmap ($MFT/$BITMAP) as
 					   well as to @nr_mft_records and
 					   @nr_free_mft_records. */
@@ -142,7 +142,7 @@ struct _ntfs_volume {
 	ntfs_inode *logfile_ni;		/* The ntfs inode of $LogFile. */
 
 	ntfs_inode *lcnbmp_ni;		/* The ntfs inode of $Bitmap. */
-	lck_rw_t lcnbmp_lock;		/* Lock for serializing accesses to the
+	lck_rw_t_ex lcnbmp_lock;		/* Lock for serializing accesses to the
 					   cluster bitmap ($Bitmap/$DATA) as
 					   well as to @nr_clusters and
 					   @nr_free_clusters. */
@@ -156,7 +156,7 @@ struct _ntfs_volume {
 	u8 major_ver;			/* Ntfs major version of volume. */
 	u8 minor_ver;			/* Ntfs minor version of volume. */
 
-	lck_mtx_t rename_lock;		/* Lock serializing directory tree
+	lck_mtx_t_ex rename_lock;		/* Lock serializing directory tree
 					   reshaping rename operations. */
 
 	ntfs_inode *root_ni;		/* The ntfs inode of the root
@@ -166,7 +166,7 @@ struct _ntfs_volume {
 	ntfs_inode *secure_sds_ni;	/* Attribute inode of $Secure/$SDS. */
 	ntfs_inode *secure_sdh_ni;	/* Index inode of $Secure/$SDH. */
 	ntfs_inode *secure_sii_ni;	/* Index inode of $Secure/$SII. */
-	lck_rw_t secure_lock;		/* Lock for serializing accesses to the
+	lck_rw_t_ex secure_lock;		/* Lock for serializing accesses to the
 					   $Secure related inodes. */
 	le32 next_security_id;		/* The security_id to use the next time
 					   a new security descriptor is added
@@ -176,7 +176,7 @@ struct _ntfs_volume {
 					   initialized. */
 	le32 default_file_security_id;	/* The security_id to use when creating
 					   files or 0 if not initialized. */
-	lck_spin_t security_id_lock;	/* Lock for serializing accesses to the
+	lck_spin_t_ex security_id_lock;	/* Lock for serializing accesses to the
 					   security_id related variables. */
 	/*
 	 * $Extend system directory is located in the root directory with inode
@@ -200,7 +200,7 @@ struct _ntfs_volume {
 	ntfs_inode *usnjrnl_j_ni;	/* Attribute inode for $UsnJrnl/$J. */
 
 	ntfs_inode_list_head inodes;	/* List of all loaded ntfs_inodes. */
-	lck_mtx_t inodes_lock;		/* Lock protecting access to inodes
+	lck_mtx_t_ex inodes_lock;		/* Lock protecting access to inodes
 					   list. */
 };
 

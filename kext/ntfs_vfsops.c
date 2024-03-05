@@ -4100,8 +4100,9 @@ static errno_t ntfs_remount(mount_t mp,
 		NVolSetReadOnly(vol);
 	}
 	/* Don't allow the user to clear MNT_DONTBROWSE for read/write volumes. */
-	if (vfs_isrdwr(mp))
-		vfs_setflags(mp, MNT_DONTBROWSE);
+	// TOBE: The code was commented by guangjun.song on 2024.3.5
+	/*if (vfs_isrdwr(mp))
+		vfs_setflags(mp, MNT_DONTBROWSE);*/
 	// TODO: Copy mount options from @opts to @vol.
 	ntfs_debug("Done.");
 	return 0;
@@ -4200,8 +4201,9 @@ static int ntfs_mount(mount_t mp, vnode_t dev_vn, user_addr_t data,
 	 * here.  In the case of an update mount, ntfs_remount() will do the
 	 * appropriate checking for changing the writability of the mount.
 	 */
-	if ((vfs_flags(mp) & MNT_DONTBROWSE) == 0 && !vfs_isupdate(mp))
-		vfs_setflags(mp, MNT_RDONLY);
+	// TOBE: The code was commented by guangjun.song on 2024.3.5
+	/*if ((vfs_flags(mp) & MNT_DONTBROWSE) == 0 && !vfs_isupdate(mp))
+		vfs_setflags(mp, MNT_RDONLY);*/
 	/*
 	 * TODO: For now we do not implement ACLs thus we force the "noowners"
 	 * mount option.

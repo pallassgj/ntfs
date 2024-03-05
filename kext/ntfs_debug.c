@@ -81,7 +81,7 @@ SYSCTL_INT(_vfs_generic_ntfs, OID_AUTO, debug_messages, CTLFLAG_RW,
  * unload time.
  */
 static char ntfs_err_buf[1024];
-static lck_spin_t ntfs_err_buf_lock;
+static lck_spin_t_ex ntfs_err_buf_lock;
 
 /**
  * ntfs_debug_init - initialize debugging for ntfs

@@ -90,12 +90,12 @@ static errno_t ntfs_rl_inc(ntfs_runlist *runlist, unsigned delta)
 	unsigned new_size = (new_elements * sizeof(ntfs_rl_element) + NTFS_ALLOC_BLOCK - 1) & ~(NTFS_ALLOC_BLOCK - 1);
 	unsigned new_count = new_size / sizeof (ntfs_rl_element);
 	if (new_count > count) {
-		ntfs_rl_element* new_rl = IONewData(ntfs_rl_element, new_count);
+		ntfs_rl_element* new_rl = IONew(ntfs_rl_element, new_count);
 		if (!new_rl)
 			return ENOMEM;
 		ntfs_rl_copy(new_rl, runlist->rl, runlist->elements);
 		if (count)
-			IODeleteData(runlist->rl, ntfs_rl_element, count);
+			IODelete(runlist->rl, ntfs_rl_element, count);
 		runlist->rl = new_rl;
 		runlist->alloc_count = new_count;
 	}
@@ -161,13 +161,13 @@ static errno_t ntfs_rl_ins(ntfs_runlist *runlist, unsigned pos, unsigned ins_cou
 	 * of the newly allocated array of runlist elements unless @pos is zero
 	 * in which case a single memcpy() is sufficient.
 	 */
-	new_rl = IONewData(ntfs_rl_element, new_count);
+	new_rl = IONew(ntfs_rl_element, new_count);
 	if (!new_rl)
 		return ENOMEM;
 	ntfs_rl_copy(new_rl, runlist->rl, pos);
 	ntfs_rl_copy(new_rl + pos + ins_count, runlist->rl + pos, runlist->elements - pos);
 	if (count)
-		IODeleteData(runlist->rl, ntfs_rl_element, count);
+		IODelete(runlist->rl, ntfs_rl_element, count);
 	runlist->rl = new_rl;
 	runlist->elements = new_elements;
 	runlist->alloc_count = new_count;
@@ -612,7 +612,7 @@ errno_t ntfs_rl_merge(ntfs_runlist *dst_runlist, ntfs_runlist *src_runlist)
 	/* If the source runlist is empty, nothing to do. */
 	if (!s_elements) {
 		if (s_count)
-			IODeleteData(s_rl, ntfs_rl_element, s_count);
+			IODelete(s_rl, ntfs_rl_element, s_count);
 		goto done;
 	}
 	d_rl = dst_runlist->rl;
@@ -632,7 +632,7 @@ errno_t ntfs_rl_merge(ntfs_runlist *dst_runlist, ntfs_runlist *src_runlist)
 		}
 		/* Return the source runlist as the destination. */
 		if (d_count)
-			IODeleteData(d_rl, ntfs_rl_element, d_count);
+			IODelete(d_rl, ntfs_rl_element, d_count);
 		dst_runlist->rl = src_runlist->rl;
 		dst_runlist->elements = src_runlist->elements;
 		dst_runlist->alloc_count = src_runlist->alloc_count;
@@ -747,7 +747,7 @@ errno_t ntfs_rl_merge(ntfs_runlist *dst_runlist, ntfs_runlist *src_runlist)
 		return err;
 	}
 	/* Merged, can discard source runlist now. */
-	IODeleteData(s_rl, ntfs_rl_element, s_count);
+	IODelete(s_rl, ntfs_rl_element, s_count);
 	d_rl = dst_runlist->rl;
 	di = dst_runlist->elements - 1;
 	/* Deal with the end of attribute marker if @s_rl ended after @d_rl. */
@@ -892,7 +892,7 @@ errno_t ntfs_mapping_pairs_decompress(ntfs_volume *vol, const ATTR_RECORD *a,
 	rlpos = 0;
 	rlcount = NTFS_ALLOC_BLOCK / sizeof (ntfs_rl_element);
 	/* Allocate NTFS_ALLOC_BLOCK bytes for the runlist. */
-	rl = IONewData(ntfs_rl_element, rlcount);
+	rl = IONew(ntfs_rl_element, rlcount);
 	if (!rl)
 		return ENOMEM;
 	/* Insert unmapped starting element if necessary. */
@@ -908,13 +908,13 @@ errno_t ntfs_mapping_pairs_decompress(ntfs_volume *vol, const ATTR_RECORD *a,
 		 * not-mapped and terminator elements.
 		 */
 		if (rlpos + 3 > rlcount) {
-			ntfs_rl_element *rl2 = IONewData(ntfs_rl_element, rlcount + NTFS_ALLOC_BLOCK / sizeof (ntfs_rl_element));
+			ntfs_rl_element *rl2 = IONew(ntfs_rl_element, rlcount + NTFS_ALLOC_BLOCK / sizeof (ntfs_rl_element));
 			if (!rl2) {
 				err = ENOMEM;
 				goto err;
 			}
 			memcpy(rl2, rl, rlcount * sizeof (ntfs_rl_element));
-			IODeleteData(rl, ntfs_rl_element, rlcount);
+			IODelete(rl, ntfs_rl_element, rlcount);
 			rl = rl2;
 			rlcount += NTFS_ALLOC_BLOCK / sizeof (ntfs_rl_element);
 		}
@@ -1045,7 +1045,7 @@ errno_t ntfs_mapping_pairs_decompress(ntfs_volume *vol, const ATTR_RECORD *a,
 	/* If no existing runlist was specified, we are done. */
 	if (!runlist->elements) {
 		if (runlist->alloc_count)
-			IODeleteData(runlist->rl, ntfs_rl_element, runlist->alloc_count);
+			IODelete(runlist->rl, ntfs_rl_element, runlist->alloc_count);
 		runlist->rl = rl;
 		runlist->elements = rlpos + 1;
 		runlist->alloc_count = rlcount;
@@ -1068,7 +1068,7 @@ errno_t ntfs_mapping_pairs_decompress(ntfs_volume *vol, const ATTR_RECORD *a,
 		ntfs_error(vol->mp, "Failed to merge runlists.");
 	}
 err:
-	IODeleteData(rl, ntfs_rl_element, rlcount);
+	IODelete(rl, ntfs_rl_element, rlcount);
 	return err;
 io_err:
 	ntfs_error(vol->mp, "Corrupt mapping pairs array in non-resident attribute.");
@@ -1626,10 +1626,10 @@ static void ntfs_rl_shrink(ntfs_runlist *runlist, unsigned new_elements)
 	unsigned new_size = (new_elements * sizeof(ntfs_rl_element) + NTFS_ALLOC_BLOCK - 1) & ~(NTFS_ALLOC_BLOCK - 1);
 	unsigned new_count = new_size / sizeof (ntfs_rl_element);
 	if (new_count < count) {
-		ntfs_rl_element *new_rl = IONewData(ntfs_rl_element, new_count);
+		ntfs_rl_element *new_rl = IONew(ntfs_rl_element, new_count);
 		if (new_rl) {
 			ntfs_rl_copy(new_rl, runlist->rl, new_elements);
-			IODeleteData(runlist->rl, ntfs_rl_element, count);
+			IODelete(runlist->rl, ntfs_rl_element, count);
 			runlist->rl = new_rl;
 			runlist->alloc_count = new_count;
 		} else
@@ -1686,7 +1686,7 @@ errno_t ntfs_rl_truncate_nolock(const ntfs_volume *vol,
 	if (!new_length) {
 		ntfs_debug("Freeing runlist.");
 		if (rl) {
-			IODeleteData(rl, ntfs_rl_element, runlist->alloc_count);
+			IODelete(rl, ntfs_rl_element, runlist->alloc_count);
 			runlist->rl = NULL;
 			runlist->alloc_count = runlist->elements = 0;
 		}

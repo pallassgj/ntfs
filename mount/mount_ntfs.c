@@ -26,7 +26,7 @@
 
 #include <err.h>
 #include <errno.h>
-#include <mntopts.h>
+#include "mntopts.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -145,7 +145,8 @@ int main(int argc, char **argv)
 	BOOL case_sensitive;
 
 	/* Default to mounting read-only. */
-	flags = MNT_RDONLY;
+    // TOBE: The code was commented by guangjun.song on 2024.3.5
+	/* flags = MNT_RDONLY; */
 	
 	/* Save & strip off program name. */
 	progname = argv[0];
