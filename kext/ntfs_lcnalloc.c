@@ -180,7 +180,7 @@ errno_t ntfs_cluster_alloc(ntfs_volume *vol, const VCN start_vcn,
 	/* Return NULL if @count is zero. */
 	if (!count) {
 		if (runlist->alloc_count)
-			IODeleteData(runlist->rl, ntfs_rl_element, runlist->alloc_count);
+			IODelete(runlist->rl, ntfs_rl_element, runlist->alloc_count);
 		runlist->rl = NULL;
 		runlist->elements = 0;
 		runlist->alloc_count = 0;
@@ -351,7 +351,7 @@ errno_t ntfs_cluster_alloc(ntfs_volume *vol, const VCN start_vcn,
 				ntfs_rl_element *rl2;
 
 				ntfs_debug("Reallocating memory.");
-				rl2 = IONewData(ntfs_rl_element, rlcount + NTFS_ALLOC_BLOCK / sizeof (ntfs_rl_element));
+				rl2 = IONew(ntfs_rl_element, rlcount + NTFS_ALLOC_BLOCK / sizeof (ntfs_rl_element));
 				if (!rl2) {
 					err = ENOMEM;
 					ntfs_error(vol->mp, "Failed to allocate memory.");
@@ -363,7 +363,7 @@ errno_t ntfs_cluster_alloc(ntfs_volume *vol, const VCN start_vcn,
 							(lcn + bmp_pos));
 				else {
 					memcpy(rl2, rl, rlcount * sizeof (ntfs_rl_element));
-					IODeleteData(rl, ntfs_rl_element, rlcount);
+					IODelete(rl, ntfs_rl_element, rlcount);
 				}
 				rl = rl2;
 				rlcount += NTFS_ALLOC_BLOCK / sizeof (ntfs_rl_element);
@@ -819,7 +819,7 @@ out:
 		(void)vnode_put(lcnbmp_ni->vn);
 		lck_rw_unlock_exclusive(&vol->lcnbmp_lock);
 		if (runlist->alloc_count)
-			IODeleteData(runlist->rl, ntfs_rl_element, runlist->alloc_count);
+			IODelete(runlist->rl, ntfs_rl_element, runlist->alloc_count);
 		runlist->rl = rl;
 		runlist->elements = rlpos + 1;
 		runlist->alloc_count = rlcount;
@@ -848,7 +848,7 @@ out:
 			NVolSetErrors(vol);
 		}
 		/* Free the runlist. */
-		IODeleteData(rl, ntfs_rl_element, rlcount);
+		IODelete(rl, ntfs_rl_element, rlcount);
 	} else if (err == ENOSPC)
 		ntfs_debug("No space left at all, err ENOSPC, first free lcn "
 				"0x%llx.", (long long)vol->data1_zone_pos);
