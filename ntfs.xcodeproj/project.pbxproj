@@ -1395,6 +1395,7 @@
 				MODULE_START = ntfs_module_start;
 				MODULE_STOP = ntfs_module_stop;
 				MODULE_VERSION = $NTFS_VERSION;
+				OTHER_CFLAGS_kasan = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.apple.filesystems.ntfs;
 				PRODUCT_NAME = ntfs;
 				USE_HEADERMAP = NO;
@@ -1424,6 +1425,7 @@
 				MODULE_START = ntfs_module_start;
 				MODULE_STOP = ntfs_module_stop;
 				MODULE_VERSION = $NTFS_VERSION;
+				OTHER_CFLAGS_kasan = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.apple.filesystems.ntfs;
 				PRODUCT_NAME = ntfs;
 				USE_HEADERMAP = NO;
