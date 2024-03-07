@@ -50,4 +50,6 @@ __attribute__((visibility("hidden"))) extern struct vnodeopv_desc ntfs_vnodeopv_
 
 __private_extern__ int ntfs_cluster_iodone(buf_t cbp, void *arg __unused);
 
+__private_extern__ void buf_setfilter(buf_t, void (*)(buf_t, void *), void *, void(**)(buf_t, void *), void **);
+
 #endif /* !_OSX_NTFS_VNOPS_H */

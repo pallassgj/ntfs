@@ -61,6 +61,7 @@
 #include <vfs/vfs_support.h>
 #include <IOKit/IOLib.h>
 
+#include "buf_internal.h"
 #include "ntfs.h"
 #include "ntfs_attr.h"
 #include "ntfs_bitmap.h"
@@ -10988,3 +10989,23 @@ static struct vnodeopv_entry_desc ntfs_vnodeop_entries[] = {
 struct vnodeopv_desc ntfs_vnodeopv_desc = {
 	&ntfs_vnodeop_p, ntfs_vnodeop_entries
 };
+
+void buf_setfilter(buf_t bp, void (*filter)(buf_t, void *), void *transaction, void(**old_iodone)(buf_t, void *), void **old_transaction)
+{
+    assert(ISSET(bp->b_lflags, BL_BUSY));
+
+    if (old_iodone) {
+        *old_iodone = bp->b_iodone;
+    }
+    if (old_transaction) {
+        *old_transaction = bp->b_transaction;
+    }
+
+    bp->b_transaction = transaction;
+    bp->b_iodone = filter;
+    if (filter) {
+        bp->b_flags |= B_FILTER;
+    } else {
+        bp->b_flags &= ~B_FILTER;
+    }
+}
