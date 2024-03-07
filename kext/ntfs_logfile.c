@@ -395,7 +395,7 @@ static errno_t ntfs_restart_page_load(ntfs_inode *ni, RESTART_PAGE_HEADER *rp,
 	 * Allocate a buffer to store the whole restart page so we can multi
 	 * sector transfer deprotect it.
 	 */
-	trp = IOMallocData(le32_to_cpu(rp->system_page_size));
+	trp = IOMalloc(le32_to_cpu(rp->system_page_size));
 	if (!trp) {
 		ntfs_error(ni->vol->mp, "Failed to allocate memory for "
 				"$LogFile restart page buffer.");
@@ -487,7 +487,7 @@ static errno_t ntfs_restart_page_load(ntfs_inode *ni, RESTART_PAGE_HEADER *rp,
 		*wrp = trp;
 	else {
 err:
-		IOFreeData(trp, le32_to_cpu(trp->system_page_size));
+		IOFree(trp, le32_to_cpu(trp->system_page_size));
 	}
 	return err;
 }
@@ -701,13 +701,13 @@ is_empty:
 		if (rstr2_lsn > rstr1_lsn) {
 			ntfs_debug("Using second restart page as it is more "
 					"recent.");
-			IOFreeData(rstr1_ph, le32_to_cpu(rstr1_ph->system_page_size));
+			IOFree(rstr1_ph, le32_to_cpu(rstr1_ph->system_page_size));
 			rstr1_ph = rstr2_ph;
 			/* rstr1_lsn = rstr2_lsn; */
 		} else {
 			ntfs_debug("Using first restart page as it is more "
 					"recent.");
-			IOFreeData(rstr2_ph, le32_to_cpu(rstr2_ph->system_page_size));
+			IOFree(rstr2_ph, le32_to_cpu(rstr2_ph->system_page_size));
 		}
 		rstr2_ph = NULL;
 	}
@@ -715,14 +715,14 @@ is_empty:
 	if (rp)
 		*rp = rstr1_ph;
 	else
-		IOFreeData(rstr1_ph, le32_to_cpu(rstr1_ph->system_page_size));
+		IOFree(rstr1_ph, le32_to_cpu(rstr1_ph->system_page_size));
 	ntfs_debug("Done.");
 	return 0;
 err:
 	lck_rw_unlock_shared(&ni->lock);
 	(void)vnode_put(ni->vn);
 	if (rstr1_ph)
-		IOFreeData(rstr1_ph, le32_to_cpu(rstr1_ph->system_page_size));
+		IOFree(rstr1_ph, le32_to_cpu(rstr1_ph->system_page_size));
 	return err;
 }
 

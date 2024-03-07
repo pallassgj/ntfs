@@ -821,7 +821,7 @@ do_next_cb:
 	 */
 	ntfs_debug("Found compressed compression block.");
 	if (!cb) {
-		cb = IOMallocData(cb_size);
+		cb = IOMalloc(cb_size);
 		if (!cb) {
 			ntfs_error(vol->mp, "Not enough memory to allocate "
 					"temporary buffer.");
@@ -888,7 +888,7 @@ next_cb:
 	if (uio)
 		uio_free(uio);
 	if (cb)
-		IOFreeData(cb, cb_size);
+		IOFree(cb, cb_size);
 	ntfs_debug("Done.");
 	return 0;
 cl_err:
@@ -907,7 +907,7 @@ err:
 	if (uio)
 		uio_free(uio);
 	if (cb)
-		IOFreeData(cb, cb_size);
+		IOFree(cb, cb_size);
 	ntfs_error(vol->mp, "Failed (error %d).", err);
 	return err;
 }

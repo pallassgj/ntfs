@@ -1690,7 +1690,7 @@ retry:
 		u8 *tmp, *al, *al_end;
 		unsigned al_entry_ofs;
 
-		tmp = IOMallocData(new_al_alloc);
+		tmp = IOMalloc(new_al_alloc);
 		if (!tmp) {
 			ntfs_error(vol->mp, "Not enough memory to extend "
 					"attribute list attribute of mft_no "
@@ -1709,7 +1709,7 @@ retry:
 					ni->attr_list_size - al_entry_ofs);
 		al_entry = ctx->al_entry = (ATTR_LIST_ENTRY*)(tmp +
 				al_entry_ofs);
-		IOFreeData(ni->attr_list, ni->attr_list_alloc);
+		IOFree(ni->attr_list, ni->attr_list_alloc);
 		ni->attr_list_alloc = new_al_alloc;
 		ni->attr_list = tmp;
 	} else if ((u8*)al_entry < ni->attr_list + ni->attr_list_size)
@@ -2381,7 +2381,7 @@ errno_t ntfs_index_move_root_to_allocation_block(ntfs_index_context *ictx)
 		bzero(ia, PAGE_SIZE);
 	} else {
 		/* Allocate a temporary buffer and zero it out. */
-		ia = IOMallocZeroData(idx_ni->block_size);
+		ia = IOMallocZero(idx_ni->block_size);
 		if (!ia) {
 			err = ENOMEM;
 			goto err;
@@ -2994,7 +2994,7 @@ update_ie_pointers:
 	 * allocated index block instead of the temporary one.
 	 */
 	memcpy(ia, ictx->ia, idx_ni->block_size);
-	IOFreeData(ictx->ia, idx_ni->block_size);
+	IOFree(ictx->ia, idx_ni->block_size);
 	ictx->entry = ie = (INDEX_ENTRY*)((u8*)ia +
 			((u8*)ictx->entry - (u8*)ictx->ia));
 	ictx->ia = ia;
@@ -3223,7 +3223,7 @@ ictx_err:
 				le32_to_cpu(actx->m->bytes_in_use);
 	if (!upl) {
 undo_alloc_err:
-		IOFreeData(ia, idx_ni->block_size);
+		IOFree(ia, idx_ni->block_size);
 	} else {
 		/* Destroy the page. */
 		ntfs_page_dump(idx_ni, upl, pl);

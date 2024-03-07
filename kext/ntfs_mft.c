@@ -168,7 +168,7 @@ errno_t ntfs_mft_record_map_ext(ntfs_inode *ni, MFT_RECORD **mrec,
 		buf_mft_record = ni->mft_no & vol->mft_records_per_sector_mask;
 		buf_read_size = vol->sector_size;
 
-		dbuf = IOMallocData(vol->mft_record_size);
+		dbuf = IOMalloc(vol->mft_record_size);
 		if (!dbuf) {
 			ntfs_error(vol->mp, "Error while allocating %lu bytes "
 					"for mft record double buffer.",
@@ -259,7 +259,7 @@ buf_err:
 err:
 	if (dbuf) {
 		lck_mtx_unlock(&ni->buf_lock);
-		IOFreeData(dbuf, vol->mft_record_size);
+		IOFree(dbuf, vol->mft_record_size);
 	}
 	/*
 	 * Release the iocount reference on the $MFT vnode.  We can ignore the
@@ -351,7 +351,7 @@ void ntfs_mft_record_unmap(ntfs_inode *ni)
 			buf_brelse(buf);
 	}
 	if (dbuf) {
-		IOFreeData(dbuf, vol->mft_record_size);
+		IOFree(dbuf, vol->mft_record_size);
 		lck_mtx_unlock(&ni->buf_lock);
 	}
 	/*
@@ -1101,7 +1101,7 @@ static errno_t ntfs_mft_bitmap_extend_allocation_nolock(ntfs_volume *vol)
 						"%d).%s", err2, es);
 				NVolSetErrors(vol);
 			}
-			IODeleteData(runlist.rl, ntfs_rl_element, runlist.alloc_count);
+			IODelete(runlist.rl, ntfs_rl_element, runlist.alloc_count);
 			return err;
 		}
 		ntfs_debug("Adding one run to mft bitmap.");
@@ -1563,7 +1563,7 @@ static errno_t ntfs_mft_data_extend_allocation_nolock(ntfs_volume *vol)
 					"cluster(s) (error %d).%s", err2, es);
 			NVolSetErrors(vol);
 		}
-		IODeleteData(runlist.rl, ntfs_rl_element, runlist.alloc_count);
+		IODelete(runlist.rl, ntfs_rl_element, runlist.alloc_count);
 		return err;
 	}
 	ntfs_debug("Allocated %lld clusters.", (long long)nr);

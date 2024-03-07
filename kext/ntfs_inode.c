@@ -242,7 +242,7 @@ errno_t ntfs_inode_init(ntfs_volume *vol, ntfs_inode *ni, const ntfs_attr *na)
 			na->name != NTFS_SFM_RESOURCEFORK_NAME &&
 			na->name != NTFS_SFM_AFPINFO_NAME) {
 		unsigned i = na->name_len * sizeof(ntfschar);
-		ni->name = IOMallocData(i + sizeof(ntfschar));
+		ni->name = IOMalloc(i + sizeof(ntfschar));
 		if (!ni->name)
 			return ENOMEM;
 		memcpy(ni->name, na->name, i);
@@ -1876,7 +1876,7 @@ info_err:
 		ni->attr_list_size = (u32)ntfs_attr_size(a);
 		ni->attr_list_alloc = (ni->attr_list_size + NTFS_ALLOC_BLOCK -
 				1) & ~(NTFS_ALLOC_BLOCK - 1);
-		ni->attr_list = IOMallocData(ni->attr_list_alloc);
+		ni->attr_list = IOMalloc(ni->attr_list_alloc);
 		if (!ni->attr_list) {
 			ni->attr_list_alloc = 0;
 			ntfs_error(vol->mp, "Not enough memory to allocate "
@@ -2261,11 +2261,11 @@ no_data_attr_special_case:
 		if (err) {
 			ntfs_error(vol->mp, "Failed to load AfpInfo (error "
 					"%d).", err);
-			IODeleteData(ai_runlist.rl, ntfs_rl_element, ai_runlist.alloc_count);
+			IODelete(ai_runlist.rl, ntfs_rl_element, ai_runlist.alloc_count);
 			goto err;
 		}
 		/* We do not need the runlist any more so free it. */
-		IODeleteData(ai_runlist.rl, ntfs_rl_element, ai_runlist.alloc_count);
+		IODelete(ai_runlist.rl, ntfs_rl_element, ai_runlist.alloc_count);
 		/* Finally cache the AFP_AfpInfo data in the base inode. */
 		ntfs_inode_afpinfo_cache(ni, &ai, ai_size);
 	}
@@ -3200,16 +3200,16 @@ static inline void ntfs_inode_free(ntfs_inode *ni)
 		ni->base_attr_nis_lock = NULL;
 	}
 	if (ni->rl.alloc_count)
-		IODeleteData(ni->rl.rl, ntfs_rl_element, ni->rl.alloc_count);
+		IODelete(ni->rl.rl, ntfs_rl_element, ni->rl.alloc_count);
 	if (ni->attr_list_alloc)
-		IOFreeData(ni->attr_list, ni->attr_list_alloc);
+		IOFree(ni->attr_list, ni->attr_list_alloc);
 	if (ni->attr_list_rl.alloc_count)
-		IODeleteData(ni->attr_list_rl.rl, ntfs_rl_element, ni->attr_list_rl.alloc_count);
+		IODelete(ni->attr_list_rl.rl, ntfs_rl_element, ni->attr_list_rl.alloc_count);
 	ntfs_dirhints_put(ni, 0);
 	if (ni->name_len && ni->name != I30 &&
 			ni->name != NTFS_SFM_RESOURCEFORK_NAME &&
 			ni->name != NTFS_SFM_AFPINFO_NAME)
-		IOFreeData(ni->name, (ni->name_len + 1) * sizeof(ntfschar));
+		IOFree(ni->name, (ni->name_len + 1) * sizeof(ntfschar));
 	/* Remove the inode from the list of inodes in the volume. */
 	lck_mtx_lock(&vol->inodes_lock);
 	LIST_REMOVE(ni, inodes);
@@ -3229,7 +3229,7 @@ static inline void ntfs_inode_free(ntfs_inode *ni)
 	ntfs_rl_deinit(&ni->rl);
 	ntfs_rl_deinit(&ni->attr_list_rl);
 	lck_mtx_destroy(&ni->extent_lock, ntfs_lock_grp);
-	IOFreeType(ni, ntfs_inode);
+	IOFree(ni, sizeof(ntfs_inode));
 	/* If the volume release was postponed, perform it now. */
 	if (do_release)
 		ntfs_do_postponed_release(vol);

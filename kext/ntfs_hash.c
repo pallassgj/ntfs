@@ -65,7 +65,7 @@ static ntfs_inode_list_head *ntfs_inode_hash_table;
 static unsigned long ntfs_inode_hash_mask;
 
 /* A sleeping lock to protect concurrent accesses to the ntfs inode hash. */
-lck_mtx_t ntfs_inode_hash_lock;
+lck_mtx_t_ex ntfs_inode_hash_lock;
 
 /**
  * ntfs_inode_hash_init - initialize the ntfs inode hash
@@ -281,13 +281,13 @@ ntfs_inode *ntfs_inode_hash_get(ntfs_volume *vol, const ntfs_attr *na)
 		return ni;
 	}
 	/* Not found, allocate a new ntfs_inode and initialize it. */
-	nni = IOMallocType(ntfs_inode);
+	nni = IOMalloc(sizeof(ntfs_inode));
 	if (!nni) {
 		ntfs_error(vol->mp, "Failed to allocate new ntfs_inode.");
 		return nni;
 	}
 	if (ntfs_inode_init(vol, nni, na)) {
-		IOFreeType(nni, ntfs_inode);
+		IOFree(nni, sizeof(ntfs_inode));
 		ntfs_error(vol->mp, "Failed to initialize new ntfs_inode.");
 		return NULL;
 	}
@@ -313,7 +313,7 @@ retry:
 		ntfs_inode_wait_locked(ni, &ntfs_inode_hash_lock);
 		if (vn && vnode_getwithvid(vn, vn_id))
 			goto retry;
-		IOFreeType(nni, ntfs_inode);
+		IOFree(nni, sizeof(ntfs_inode));
 		ntfs_debug("Done (ntfs_inode found in cache - lost race)).");
 		return ni;
 	}

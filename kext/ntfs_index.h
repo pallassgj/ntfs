@@ -250,7 +250,7 @@ _Static_assert(offsetof(ntfs_index_context,actx)  == offsetof(ntfs_index_context
 static inline ntfs_index_context *ntfs_index_ctx_alloc(void)
 {
     // Cannot use IOMallocType here: the ntfs_index_context has unions with pointers inside
-    return IOMallocType(ntfs_index_context);
+    return IOMalloc(sizeof(ntfs_index_context));
 }
 
 /**
@@ -324,7 +324,7 @@ static inline void ntfs_index_ctx_disconnect(ntfs_index_context *ictx)
  */
 static inline void ntfs_index_ctx_free(ntfs_index_context *ictx)
 {
-    IOFreeType(ictx, ntfs_index_context);
+    IOFree(ictx, sizeof(ntfs_index_context));
 }
 
 /**
